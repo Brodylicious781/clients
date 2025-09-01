@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immobilienmarkt-Analyse Hamburg (Final)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #BFD7EA;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 500px;
+                max-height: 600px;
+            }
+            .chart-container-donut {
+                height: 350px;
+                 max-height: 350px;
+            }
+             .chart-container-small {
+                height: 350px;
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#0B3954] mb-2">Immobilien-Kompass Hamburg</h1>
+            <p class="text-lg text-[#087E8B]">Median-Preisanalyse basierend auf Marktrecherche (Q3 2025)</p>
+            <div class="mt-6 flex justify-center items-center gap-4 flex-wrap">
+                <div class="bg-white/70 rounded-full px-4 py-2 text-sm font-semibold text-[#0B3954] shadow">Qualifizierter Bestand</div>
+                <div class="bg-white/70 rounded-full px-4 py-2 text-sm font-semibold text-[#0B3954] shadow">75 - 105 m² Wohnfläche</div>
+                <div class="bg-white/70 rounded-full px-4 py-2 text-sm font-semibold text-[#0B3954] shadow">Energieeffizienz A+ bis D</div>
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <section class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-xl p-6">
+                <h2 class="text-2xl font-bold text-[#0B3954] mb-4">Median-Preisvergleich der Stadtteile</h2>
+                <p class="text-gray-600 mb-6">Die folgende Grafik zeigt die angepassten Median-Preise für qualitativ hochwertige Bestandswohnungen (Energieklasse A+-D) in den von Ihnen definierten Stadtteilen. Die Preise basieren auf einer Synthese von offiziellen Kaufpreisen und aktuellen Angebotsdaten, um ein realistisches Marktbild zu zeichnen.</p>
+                <div class="chart-container w-full max-w-6xl mx-auto md:h-[700px] lg:h-[800px]">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </section>
+            
+            <section class="lg:col-span-2 bg-white rounded-lg shadow-xl p-6">
+                 <h2 class="text-2xl font-bold text-[#0B3954] mb-4">Preis-Korridore im Überblick</h2>
+                 <p class="text-gray-600 mb-6">Basierend auf der Analyse ergeben sich klare Preisspannen für die primären und sekundären Suchgebiete, wenn man die extremsten Ausreißer (oberste und unterste 20%) entfernt.</p>
+                 <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b-2 border-[#0B3954]">
+                                <th class="py-2 font-bold text-[#0B3954]">Gebietsgruppe</th>
+                                <th class="py-2 font-bold text-[#0B3954]">Medianer Preiskorridor (€/m²)</th>
+                                <th class="py-2 font-bold text-[#0B3954]">Preisspanne (90 m²)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-200">
+                                <td class="py-3 font-semibold">Primäre Stadtteile</td>
+                                <td class="py-3">5.612 € - 8.325 €</td>
+                                <td class="py-3 font-bold text-[#087E8B]">ca. 505.000 € - 749.000 €</td>
+                            </tr>
+                            <tr>
+                               <td class="py-3 font-semibold">Sekundäre Suchgebiete</td>
+                                <td class="py-3">5.036 € - 6.430 €</td>
+                                <td class="py-3 font-bold text-[#5e9fa8]">ca. 453.000 € - 579.000 €</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                 <p class="text-xs text-gray-500 mt-4">Diese Korridore repräsentieren den Kernmarkt für qualitativ hochwertige Bestandsimmobilien in den jeweiligen Lagen.</p>
+            </section>
+            
+            <section class="bg-white rounded-lg shadow-xl p-6 flex flex-col">
+                 <h2 class="text-2xl font-bold text-[#0B3954] mb-4">Blick auf die sekundären Suchgebiete</h2>
+                 <p class="text-gray-600 mb-4">Die sekundären Suchgebiete bieten ein attraktives Preis-Leistungs-Verhältnis. Der Median-Preis liegt hier deutlich unter dem der primären Lagen, was mehr Wohnraum für das gleiche Budget ermöglicht.</p>
+                 <div class="flex-grow flex items-center justify-center">
+                    <div class="chart-container-donut w-full max-w-sm mx-auto">
+                        <canvas id="savingsChart"></canvas>
+                    </div>
+                </div>
+                 <p class="text-gray-600 mt-4 text-sm">Standorte wie Eidelstedt, Schnelsen oder Barmbek-Nord sind eine prüfenswerte Alternative mit guter Infrastruktur.</p>
+            </section>
+            
+            <div class="md:col-span-2 lg:col-span-3 border-t-4 border-[#0B3954]/50 my-8"></div>
+            <div class="md:col-span-2 lg:col-span-3 text-center">
+                <h2 class="text-3xl font-extrabold text-[#0B3954]">Detaillierte Einblicke: Ausgewählte Analysen</h2>
+            </div>
+
+            <!-- KATEGORIE 1: Finanzielle Rahmenbedingungen -->
+            <div class="md:col-span-2 lg:col-span-3 text-left py-4">
+                <h3 class="text-2xl font-bold text-[#0B3954]">1. Finanzielle Rahmenbedingungen</h3>
+            </div>
+            
+            <section class="bg-white rounded-lg shadow-xl p-6">
+                <h4 class="font-bold text-[#0B3954] mb-2">1. Ø Eigenkapitalanteil</h4>
+                <p class="text-gray-600 text-sm mb-4">Ein solider Eigenkapitalanteil ist aufgrund der hohen Preise und Banken-Anforderungen entscheidend.</p>
+                <div class="chart-container-small"><canvas id="stat_3_equity"></canvas></div>
+            </section>
+            
+            <section class="bg-white rounded-lg shadow-xl p-6">
+                <h4 class="font-bold text-[#0B3954] mb-2">2. Zinsentwicklung Baufinanzierung (10J)</h4>
+                <p class="text-gray-600 text-sm mb-4">Nach einer Phase niedriger Zinsen hat sich das Niveau stabilisiert, was die monatliche Belastung direkt beeinflusst.</p>
+                <div class="chart-container-small"><canvas id="stat_4_interest"></canvas></div>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-xl p-6">
+                <h4 class="font-bold text-[#0B3954] mb-2">3. Verhandlungsspielraum</h4>
+                <p class="text-gray-600 text-sm mb-4">In Top-Lagen gibt es kaum Spielraum, während in mittleren Lagen leichte Verhandlungen möglich sind.</p>
+                <div class="chart-container-small"><canvas id="stat_5_negotiation"></canvas></div>
+            </section>
+
+            <!-- KATEGORIE 2: IMMOBILIEN-CHARAKTERISTIKA -->
+            <div class="md:col-span-2 lg:col-span-3 text-left py-4 mt-8">
+                <h3 class="text-2xl font-bold text-[#0B3954]">2. Immobilien-Charakteristika</h3>
+            </div>
+            
+            <section class="bg-white rounded-lg shadow-xl p-6">
+                <h4 class="font-bold text-[#0B3954] mb-2">4. Heizungsarten im Bestand</h4>
+                <p class="text-gray-600 text-sm mb-4">Gas- und Fernwärme dominieren den Markt. Erneuerbare Energien sind im Bestand noch unterrepräsentiert.</p>
+                <div class="chart-container-small"><canvas id="stat_14_heating_type"></canvas></div>
+            </section>
+            
+            <section class="bg-white rounded-lg shadow-xl p-6">
+                <h4 class="font-bold text-[#0B3954] mb-2">5. Mediane Nebenkosten pro m²</h4>
+                <p class="text-gray-600 text-sm mb-4">Die "zweite Miete" ist ein relevanter Kostenfaktor, der je nach energetischem Zustand stark variiert.</p>
+                <div class="chart-container-small"><canvas id="stat_15_utilities"></canvas></div>
+            </section>
+            
+            <section class="bg-white rounded-lg shadow-xl p-6">
+                <h4 class="font-bold text-[#0B3954] mb-2">6. Parkplatz-Situation</h4>
+                <p class="text-gray-600 text-sm mb-4">In der Innenstadt ist ein eigener Stellplatz selten und teuer, während er in Randlagen oft zum Standard gehört.</p>
+                <div class="chart-container-small"><canvas id="stat_16_parking"></canvas></div>
+            </section>
+            
+            <section class="bg-white rounded-lg shadow-xl p-6">
+                <h4 class="font-bold text-[#0B3954] mb-2">7. Preisaufschlag nach Etage</h4>
+                <p class="text-gray-600 text-sm mb-4">Dachgeschoss- und Penthouse-Wohnungen erzielen die höchsten Preise, während das Erdgeschoss oft am günstigsten ist.</p>
+                <div class="chart-container-small"><canvas id="stat_17_floor_price"></canvas></div>
+            </section>
+            
+            <section class="bg-white rounded-lg shadow-xl p-6">
+                <h4 class="font-bold text-[#0B3954] mb-2">8. Einfluss der Energieeffizienzklasse</h4>
+                <p class="text-gray-600 text-sm mb-4">Eine gute Energieeffizienz (A/B) kann den Kaufpreis um bis zu 15% gegenüber einem unsanierten Objekt (G/H) erhöhen.</p>
+                <div class="chart-container-small"><canvas id="stat_18_energy_class"></canvas></div>
+            </section>
+            
+             <!-- BUDGET ANALYSIS SECTION -->
+            <section class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-xl p-8 mt-8">
+                <h2 class="text-2xl font-bold text-[#0B3954] mb-2 text-center">Was kann ich mir für mein Budget leisten?</h2>
+                <p class="text-gray-600 max-w-4xl mx-auto mb-8 text-center">
+                    Hier sehen Sie, welche ungefähre Wohnungsgröße Sie in den verschiedenen Stadtteilen für Ihr jeweiliges Budget erwarten können.
+                </p>
+                <div id="budgetAnalysisContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                </div>
+            </section>
+            
+            <!-- EIGENKAPITAL-ANALYSE -->
+            <section class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-xl p-8 mt-8">
+                <h2 class="text-2xl font-bold text-[#0B3954] mb-2 text-center">Wie viel Eigenkapital wird benötigt?</h2>
+                <p class="text-gray-600 max-w-4xl mx-auto mb-8 text-center">
+                    Banken fordern in der Regel 20% Eigenkapital auf den Kaufpreis sowie die vollständige Deckung der Kaufnebenkosten. Hier ist eine Beispielrechnung für verschiedene Budgets.
+                </p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b-2 border-[#0B3954]">
+                                <th class="py-2 font-bold text-[#0B3954]">Kaufpreis</th>
+                                <th class="py-2 font-bold text-[#0B3954]">Benötigtes EK (ohne Makler)</th>
+                                <th class="py-2 font-bold text-[#0B3954]">Benötigtes EK (mit Makler)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="equityAnalysisBody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-xs text-gray-500 mt-4 text-center">
+                    <p>Annahmen: 20% Eigenkapital vom Kaufpreis + Nebenkosten.</p>
+                    <p>Nebenkosten ohne Makler (ca. 7,5%): 5,5% Grunderwerbsteuer (HH) + 2% Notar/Grundbuch.</p>
+                    <p>Nebenkosten mit Makler (ca. 11,07%): Zusätzlich 3,57% Käuferprovision inkl. MwSt.</p>
+                </div>
+            </section>
+
+             <!-- FINANZIERUNGS-ANALYSE -->
+            <section class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-xl p-8 mt-8">
+                <h2 class="text-2xl font-bold text-[#0B3954] mb-2 text-center">Was kostet die Finanzierung?</h2>
+                <p class="text-gray-600 max-w-4xl mx-auto mb-8 text-center">
+                    Die monatliche Rate und die Gesamtlaufzeit hängen stark von der anfänglichen Tilgung ab. Hier ein Vergleich für die Restfinanzierung (80% des Kaufpreises) bei einem angenommenen Zinssatz von 3,87%.
+                </p>
+                <div id="financingAnalysisContainer" class="chart-container-small w-full" style="height: 500px; max-height: 600px;">
+                    <canvas id="financingChart"></canvas>
+                </div>
+                 <div id="financingDetails" class="mt-6 text-sm text-center grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2"></div>
+            </section>
+            
+            <!-- ÜBERSCHUSS-EK-ANALYSE -->
+            <section class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-xl p-8 mt-8">
+                 <h2 class="text-2xl font-bold text-[#0B3954] mb-2 text-center">Potenzial des Überschuss-Eigenkapitals</h2>
+                <p class="text-gray-600 max-w-4xl mx-auto mb-8 text-center">
+                    Wenn Sie mit einem festen Eigenkapital von 300.000 € starten und nicht alles für den Immobilienkauf benötigen, kann das Restkapital investiert werden. Diese Tabelle zeigt das potenzielle monatliche Zusatzeinkommen bei verschiedenen Anlagerenditen.
+                </p>
+                 <div id="surplusEquityContainer" class="space-y-8">
+                 </div>
+                 <div class="text-xs text-gray-500 mt-4 text-center">
+                    <p>Annahmen: Kapitalertragsteuer (Abgeltungsteuer + Soli) von ca. 26,375% auf die Brutto-Erträge.</p>
+                </div>
+            </section>
+
+
+        </main>
+
+        <footer class="text-center mt-12 text-sm text-[#0B3954]/70">
+            <p>Stand: Q3 2025. Alle Preisangaben sind Median-Schätzungen basierend auf der bereitgestellten Marktanalyse und dienen der Orientierung.</p>
+            <p>Eine professionelle Bewertung eines konkreten Objekts wird empfohlen. © Pixelprofit</p>
+        </footer>
+    </div>
+
+    <script>
+        const formatCurrency = (value) => value.toLocaleString('de-DE', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0 });
+
+        const wrapLabel = (label) => {
+            if (label.length > 16) {
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+                words.forEach(word => {
+                    if ((currentLine + word).length > 16) {
+                        lines.push(currentLine.trim());
+                        currentLine = '';
+                    }
+                    currentLine += word + ' ';
+                });
+                lines.push(currentLine.trim());
+                return lines;
+            }
+            return label;
+        };
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            } else {
+                return label;
+            }
+        };
+        
+        const defaultColors = ['#0B3954', '#087E8B', '#5e9fa8', '#BFD7EA', '#FF5A5F'];
+
+        const synthesizedData = [
+            { district: "Alsterdorf", price: 7281, group: "Gut" }, { district: "Altona-Altstadt", price: 7203, group: "Sehr Gut" }, { district: "Altona-Nord", price: 7744, group: "Sehr Gut" }, { district: "Bahrenfeld", price: 5513, group: "Gut" }, { district: "Blankenese", price: 8118, group: "Premium" }, { district: "Eimsbüttel", price: 6765, group: "Sehr Gut" }, { district: "Eppendorf", price: 8254, group: "Premium" }, { district: "Fuhlsbüttel", price: 4996, group: "Mittel" }, { district: "Groß Borstel", price: 5031, group: "Mittel" }, { district: "Groß Flottbek", price: 7013, group: "Sehr Gut" }, { district: "Harvestehude", price: 10456, group: "Premium" }, { district: "Hoheluft-Ost", price: 7334, group: "Sehr Gut" }, { district: "Hoheluft-West", price: 6450, group: "Sehr Gut" }, { district: "Hummelsbüttel", price: 5219, group: "Mittel" }, { district: "Iserbrook", price: 5439, group: "Mittel" }, { district: "Langenhorn", price: 5130, group: "Mittel" }, { district: "Lokstedt", price: 6208, group: "Gut" }, { district: "Niendorf", price: 5644, group: "Gut" }, { district: "Nienstedten", price: 6641, group: "Sehr Gut" }, { district: "Osdorf", price: 5220, group: "Mittel" }, { district: "Othmarschen", price: 7594, group: "Sehr Gut" }, { district: "Ottensen", price: 7329, group: "Sehr Gut" }, { district: "Rotherbaum", price: 10436, group: "Premium" }, { district: "Stellingen", price: 5182, group: "Mittel" }, { district: "Winterhude", price: 8175, group: "Premium" }, { district: "Lurup", price: 5981, group: "Sekundär" }, { district: "Eidelstedt", price: 4889, group: "Sekundär" }, { district: "Schnelsen", price: 4685, group: "Sekundär" }, { district: "Norderstedt", price: 4000, group: "Sekundär" }, { district: "Barmbek-Nord", price: 5419, group: "Sekundär" }, { district: "Barmbek-Süd", price: 6203, group: "Sekundär" }
+        ];
+
+        const energyEfficiencySurcharge = 1.075;
+        const districtData = synthesizedData.map(d => ({ ...d, adjustedPrice: d.price * energyEfficiencySurcharge })).sort((a, b) => b.adjustedPrice - a.adjustedPrice);
+        
+        const groupColors = { "Premium": "#0B3954", "Sehr Gut": "#087E8B", "Gut": "#5e9fa8", "Mittel": "#BFD7EA", "Sekundär": "#FF5A5F" };
+        
+        new Chart(document.getElementById('priceChart').getContext('2d'), {
+            type: 'bar',
+            data: { labels: districtData.map(d => wrapLabel(d.district)), datasets: [{ label: 'Angepasster Median-Preis pro m² (€)', data: districtData.map(d => d.adjustedPrice), backgroundColor: districtData.map(d => groupColors[d.group]), borderColor: '#ffffff', borderWidth: 1 }] },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true, ticks: { callback: value => formatCurrency(value) } }, y: { ticks: { autoSkip: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { title: tooltipTitleCallback, label: context => `${context.dataset.label || ''}: ${formatCurrency(context.parsed.x)}` } } } }
+        });
+
+        new Chart(document.getElementById('savingsChart').getContext('2d'), {
+            type: 'doughnut',
+            data: { labels: ['Primäre Lagen (Preisbasis)', 'Einsparpotenzial sekundäre Lagen'], datasets: [{ data: [100, 28], backgroundColor: ['#BFD7EA', '#FF5A5F'], borderColor: '#ffffff', borderWidth: 4, hoverOffset: 4 }] },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Preisvorteil der sekundären Suchgebiete', font: { size: 16, weight: 'bold' }, color: '#0B3954' }, tooltip: { callbacks: { label: context => context.dataIndex === 0 ? ' 100% Preisbasis' : ` Bis zu ${context.raw}% günstiger` } } } }
+        });
+
+        new Chart(document.getElementById('stat_3_equity').getContext('2d'), { type: 'bar', data: { labels: ['Ø Käufer'], datasets: [{ label: 'Eigenkapital in %', data: [28], backgroundColor: ['#087E8B'] }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 50, ticks: { callback: v => v + '%' } } }, plugins: { legend: { display: false } } } });
+        new Chart(document.getElementById('stat_4_interest').getContext('2d'), { type: 'line', data: { labels: ['2021', '2022', '2023', '2024', '2025'], datasets: [{ label: 'Ø Zinssatz', data: [1.1, 2.8, 4.1, 3.8, 3.6], borderColor: '#087E8B', tension: 0.1 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: v => v.toFixed(1) + '%' } } }, plugins: { legend: { display: false } } } });
+        new Chart(document.getElementById('stat_5_negotiation').getContext('2d'), { type: 'bar', data: { labels: ['Premium-Lage', 'Gute Lage', 'Mittlere Lage'], datasets: [{ label: 'Median-Nachlass vom Angebotspreis', data: [1.5, 3.5, 6.0], backgroundColor: ['#0B3954', '#087E8B', '#5e9fa8'] }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: v => v + '%' } } }, plugins: { legend: { display: false } } } });
+        new Chart(document.getElementById('stat_14_heating_type').getContext('2d'), { type: 'doughnut', data: { labels: ['Gas', 'Fernwärme', 'Öl', 'Wärmepumpe/Solar'], datasets: [{ data: [45, 35, 12, 8], backgroundColor: defaultColors }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+        new Chart(document.getElementById('stat_15_utilities').getContext('2d'), { type: 'bar', data: { labels: ['Unsaniert', 'Saniert', 'Neubau'], datasets: [{ label: 'Mediane Nebenkosten/m²', data: [4.5, 3.2, 2.8], backgroundColor: ['#FF5A5F', '#5e9fa8', '#087E8B'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => formatCurrency(v) } } } } });
+        new Chart(document.getElementById('stat_16_parking').getContext('2d'), { type: 'bar', data: { labels: ['Innenstadt', 'Randbezirke'], datasets: [ {label: 'TG/Stellplatz', data: [20, 70]}, {label: 'Anwohnerparken', data: [50, 20]}, {label: 'Frei/Kein', data: [30, 10]} ] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => v+'%'} } } } });
+        new Chart(document.getElementById('stat_17_floor_price').getContext('2d'), { type: 'line', data: { labels: ['EG', '1. OG', '2./3. OG', 'DG'], datasets: [{ label: '% vom Medianpreis', data: [92, 100, 102, 115], borderColor: '#087E8B', tension: 0.1 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => v+'%' } } } } });
+        new Chart(document.getElementById('stat_18_energy_class').getContext('2d'), { type: 'bar', data: { labels: ['A+/A/B', 'C/D', 'E/F', 'G/H'], datasets: [{ label: 'Preisab- / aufschlag', data: [5, 0, -8, -15], backgroundColor: ['#087E8B', '#5e9fa8', '#FF5A5F', '#C81D25'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => v+'%' } } } } });
+        
+        const budgets = [300000, 400000, 500000, 600000];
+        const budgetContainer = document.getElementById('budgetAnalysisContainer');
+        const getSizeDescription = (size) => { if (size < 45) return "Kleine 2-Zimmer-Wohnung"; if (size < 65) return "2- bis 2,5-Zimmer-Wohnung"; if (size < 85) return "3-Zimmer-Wohnung"; if (size < 105) return "Große 3- bis 4-Zimmer-Wohnung"; return "Sehr große 4+ Zimmer-Wohnung"; };
+        budgets.forEach(budget => {
+            const affordableDistricts = districtData.map(d => ({ name: d.district, size: Math.floor(budget / d.adjustedPrice) })).filter(d => d.size >= 40).sort((a, b) => b.size - a.size);
+            let resultsHtml = '<p class="text-sm text-gray-500">Für dieses Budget sind in den teureren Stadtteilen keine passenden Wohnungen zu erwarten.</p>';
+            if (affordableDistricts.length > 0) {
+                resultsHtml = '<ul class="space-y-2 text-left">';
+                affordableDistricts.forEach(d => { resultsHtml += `<li class="flex justify-between items-center text-sm border-b border-gray-200 py-1"><span class="font-semibold">${d.name}</span><span class="text-right">ca. <span class="font-bold text-[#087E8B]">${d.size} m²</span><span class="block text-xs text-gray-500">${getSizeDescription(d.size)}</span></span></li>`; });
+                resultsHtml += '</ul>';
+            }
+            budgetContainer.innerHTML += `<div class="bg-gray-50 rounded-lg p-6 shadow-md"><h3 class="text-2xl font-bold text-[#0B3954] mb-4">Für ${formatCurrency(budget)}</h3><div class="max-h-60 overflow-y-auto pr-2">${resultsHtml}</div></div>`;
+        });
+
+        const equityBudgets = [300000, 400000, 500000, 600000];
+        const equityTableBody = document.getElementById('equityAnalysisBody');
+        const ancillaryRateNoBroker = 0.075, ancillaryRateWithBroker = 0.1107;
+        equityBudgets.forEach(price => {
+            const downPayment = price * 0.20;
+            const ancillaryCostsNoBroker = price * ancillaryRateNoBroker, equityNoBroker = downPayment + ancillaryCostsNoBroker;
+            const ancillaryCostsWithBroker = price * ancillaryRateWithBroker, equityWithBroker = downPayment + ancillaryCostsWithBroker;
+            equityTableBody.innerHTML += `<tr class="border-b border-gray-200"><td class="py-3 font-bold text-lg">${formatCurrency(price)}</td><td class="py-3"><span class="font-bold text-lg text-green-700">${formatCurrency(equityNoBroker)}</span><span class="block text-xs text-gray-500">20% EK (${formatCurrency(downPayment)}) + NK (${formatCurrency(ancillaryCostsNoBroker)})</span></td><td class="py-3"><span class="font-bold text-lg text-red-700">${formatCurrency(equityWithBroker)}</span><span class="block text-xs text-gray-500">20% EK (${formatCurrency(downPayment)}) + NK (${formatCurrency(ancillaryCostsWithBroker)})</span></td></tr>`;
+        });
+        
+        // Financing Analysis
+        const financingData = { labels: [], datasets: [{ label: '2% Tilgung', data: [], backgroundColor: '#087E8B' }, { label: '1.5% Tilgung', data: [], backgroundColor: '#5e9fa8' }] };
+        let financingDetailsText = '';
+        const interestRate = 0.0387;
+        equityBudgets.forEach(price => {
+            const loanAmount = price * 0.8;
+            financingData.labels.push([formatCurrency(price), `(Finanz.: ${formatCurrency(loanAmount)})`]);
+            [0.02, 0.015].forEach((repaymentRate, index) => {
+                const annualRate = interestRate + repaymentRate;
+                const monthlyRate = loanAmount * annualRate / 12;
+                const monthlyInterestRate = interestRate / 12;
+                const numMonths = -Math.log(1 - (loanAmount * monthlyInterestRate) / monthlyRate) / Math.log(1 + monthlyInterestRate);
+                const years = Math.floor(numMonths / 12);
+                const months = Math.round(numMonths % 12);
+                financingData.datasets[index].data.push(monthlyRate.toFixed(2));
+                financingDetailsText += `<div class="p-2 rounded-lg bg-gray-50"><p class="font-bold">${formatCurrency(price)} | ${repaymentRate*100}% Tilgung</p><p>${formatCurrency(monthlyRate)}/Monat (${years} J, ${months} M)</p></div>`;
+            });
+        });
+        new Chart(document.getElementById('financingChart').getContext('2d'), { type: 'bar', data: financingData, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${formatCurrency(parseFloat(c.raw))} / Monat` } } }, scales: { y: { title: { display: true, text: 'Monatliche Rate' }, ticks: { callback: value => formatCurrency(value) } }, x: { title: { display: true, text: 'Kaufpreis (Finanzierungssumme)' }, stacked: false } } } });
+        document.getElementById('financingDetails').innerHTML = financingDetailsText;
+
+        // Surplus Equity Investment Analysis
+        const surplusContainer = document.getElementById('surplusEquityContainer');
+        const initialEquity = 300000;
+        const investmentRates = [0.03, 0.06, 0.08, 0.10, 0.12, 0.14];
+        const taxRate = 0.26375;
+        equityBudgets.forEach(price => {
+            let cardHtml = `<div class="bg-gray-50 rounded-lg p-6 shadow-md"><h3 class="text-2xl font-bold text-[#0B3954] mb-4">Anlage bei ${formatCurrency(price)} Kaufpreis</h3>`;
+            const scenarios = [{ name: 'Ohne Makler', rate: ancillaryRateNoBroker }, { name: 'Mit Makler', rate: ancillaryRateWithBroker }];
+            scenarios.forEach(scenario => {
+                const requiredEquity = price * 0.20 + price * scenario.rate;
+                const surplusEquity = initialEquity - requiredEquity;
+                cardHtml += `<div class="mb-4"><h4 class="font-bold text-md text-gray-700 mb-2">Szenario: ${scenario.name}</h4>`;
+                if (surplusEquity > 0) {
+                    cardHtml += `<p class="text-sm mb-2">Übriges Kapital zur Anlage: <span class="font-bold">${formatCurrency(surplusEquity)}</span></p>`;
+                    cardHtml += '<table class="w-full text-sm text-left"><thead><tr class="border-b"><th class="py-1">Rendite</th><th class="py-1">Brutto/Monat</th><th class="py-1">Steuer/Monat</th><th class="py-1">Netto/Monat</th></tr></thead><tbody>';
+                    investmentRates.forEach(rate => {
+                        const monthlyGross = (surplusEquity * rate) / 12;
+                        const monthlyTax = monthlyGross * taxRate;
+                        const monthlyNet = monthlyGross - monthlyTax;
+                        cardHtml += `<tr class="border-b border-gray-200">
+                            <td class="py-1 font-semibold">${(rate*100).toFixed(0)}%</td>
+                            <td class="py-1">${formatCurrency(monthlyGross)}</td>
+                            <td class="py-1 text-red-600">-${formatCurrency(monthlyTax)}</td>
+                            <td class="py-1 font-bold text-green-700">${formatCurrency(monthlyNet)}</td>
+                        </tr>`;
+                    });
+                    cardHtml += '</tbody></table>';
+                } else {
+                    cardHtml += `<p class="text-sm text-red-600 font-semibold">Nicht mit 300.000 € Eigenkapital möglich (benötigt: ${formatCurrency(requiredEquity)}).</p>`;
+                }
+                cardHtml += `</div>`;
+            });
+            cardHtml += `</div>`;
+            surplusContainer.innerHTML += cardHtml;
+        });
+
+    </script>
+</body>
+</html>
+
