@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projektübersicht</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-2">Projektübersicht</h1>
+            <p class="text-lg text-gray-600">Bitte wählen Sie ein Projekt aus, um es anzuzeigen.</p>
+        </header>
+
+        <main class="max-w-2xl mx-auto bg-white rounded-lg shadow-xl p-6">
+            <div id="project-list" class="space-y-4">
+                <!-- Projects will be dynamically inserted here -->
+            </div>
+        </main>
+
+        <footer class="text-center mt-12 text-sm text-gray-500">
+            <p>© Pixelprofit</p>
+        </footer>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="modal-backdrop">
+        <div class="bg-white rounded-lg shadow-2xl p-8 m-4 max-w-sm w-full">
+            <h2 class="text-2xl font-bold mb-4 text-gray-900">Passwort erforderlich</h2>
+            <p id="modalProjectName" class="text-gray-600 mb-6">Bitte geben Sie das Passwort ein, um auf das Projekt zuzugreifen.</p>
+            <input type="password" id="passwordInput" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Passwort...">
+            <p id="errorMessage" class="text-red-500 text-sm mt-2 hidden">Falsches Passwort. Bitte versuchen Sie es erneut.</p>
+            <div class="mt-6 flex justify-end space-x-4">
+                <button id="cancelButton" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Abbrechen</button>
+                <button id="submitButton" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Bestätigen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Configuration ---
+            // To add a new project, simply add a new object to this array.
+            const projects = [
+                {
+                    name: 'Immokauf Hamburg',
+                    url: 'Hamburg_Luhel.html',
+                    password: 'PPHelsen2025!'
+                },
+                // Example for a future project:
+                // {
+                //     name: 'Marktanalyse Berlin',
+                //     url: 'Berlin_Analyse.html',
+                //     password: 'AnotherPassword123'
+                // }
+            ];
+            
+            // --- Elements ---
+            const projectListContainer = document.getElementById('project-list');
+            const modal = document.getElementById('passwordModal');
+            const modalProjectName = document.getElementById('modalProjectName');
+            const passwordInput = document.getElementById('passwordInput');
+            const cancelButton = document.getElementById('cancelButton');
+            const submitButton = document.getElementById('submitButton');
+            const errorMessage = document.getElementById('errorMessage');
+
+            let currentProject = null;
+
+            // --- Functions ---
+            function renderProjects() {
+                projectListContainer.innerHTML = ''; // Clear existing list
+                projects.forEach(project => {
+                    const projectElement = document.createElement('a');
+                    projectElement.href = '#';
+                    projectElement.className = 'block bg-gray-50 p-4 rounded-lg shadow-sm hover:bg-blue-50 hover:shadow-md transition-all';
+                    projectElement.dataset.url = project.url;
+                    projectElement.dataset.password = project.password;
+                    projectElement.dataset.name = project.name;
+
+                    projectElement.innerHTML = `
+                        <h3 class="text-xl font-bold text-blue-700">${project.name}</h3>
+                        <p class="text-gray-500">Klicken, um zu öffnen</p>
+                    `;
+
+                    projectElement.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentProject = {
+                            url: e.currentTarget.dataset.url,
+                            password: e.currentTarget.dataset.password,
+                            name: e.currentTarget.dataset.name
+                        };
+                        openModal();
+                    });
+
+                    projectListContainer.appendChild(projectElement);
+                });
+            }
+
+            function openModal() {
+                modalProjectName.textContent = `Bitte geben Sie das Passwort ein, um auf das Projekt "${currentProject.name}" zuzugreifen.`;
+                modal.style.display = 'flex';
+                passwordInput.focus();
+                errorMessage.classList.add('hidden');
+            }
+
+            function closeModal() {
+                modal.style.display = 'none';
+                passwordInput.value = '';
+                currentProject = null;
+            }
+
+            function checkPassword() {
+                if (passwordInput.value === currentProject.password) {
+                    window.location.href = currentProject.url;
+                } else {
+                    errorMessage.classList.remove('hidden');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            }
+
+            // --- Event Listeners ---
+            cancelButton.addEventListener('click', closeModal);
+            submitButton.addEventListener('click', checkPassword);
+            passwordInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+                 if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // --- Initial Load ---
+            renderProjects();
+        });
+    </script>
+
+</body>
+</html>
